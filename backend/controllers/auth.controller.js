@@ -8,59 +8,60 @@ export const signup = async (req, res) => {
 
         // Validation
         if (!fullName || !username || !password || !confirmPassword || !gender) {
-            return res.status(400).json({ message: "Please fill all the fields" });
+            return res.status(400).json({ error: "Please fill all the fields" });
         }
         if (password !== confirmPassword) {
-            return res.status(400).json({ message: "Passwords do not match" });
+            return res.status(400).json({ error: "Passwords do not match" });
         }
         if (password.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters long" });
+            return res.status(400).json({ error: "Password must be at least 6 characters long" });
         }
 
         // Check if user already exists
-        const userAlreadyexist = await User.findOne({ username });
-        if (userAlreadyexist) {
-            return res.status(400).json({ message: "Username already exists, please choose a different username" });
+        const userAlreadyExists = await User.findOne({ username });
+        if (userAlreadyExists) {
+            return res.status(409).json({ error: "Username already exists, please choose a different username" });
         }
 
         // Password hashing
         const salt = await bcrypt.genSalt(10);
-        const hashpassword = await bcrypt.hash(password, salt);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
         // Profile picture based on gender
-        const boyprofilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-        const girlprofilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`;
+        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+        const profilePic = gender === 'male' ? boyProfilePic : girlProfilePic;
 
         // Create new user
-        const newuser = new User({
+        const newUser = new User({
             fullName,
             username,
-            password: hashpassword,
+            password: hashedPassword,
             gender,
-            profilePic: gender === 'male' ? boyprofilePic : girlprofilePic
+            profilePic
         });
 
-        // Save user and generate token
-        if (newuser) {
-            generateTokenAndSetCookie(newuser._id, res);
-            await newuser.save();
-        }
+        await newUser.save();
 
-        res.status(200).json({
-            _id: newuser._id,
-            fullName: newuser.fullName,
-            username: newuser.username,
-            profilePic: newuser.profilePic,
+        // Generate token and set cookie
+        generateTokenAndSetCookie(newUser._id, res);
+
+        res.status(201).json({
+            _id: newUser._id,
+            fullName: newUser.fullName,
+            username: newUser.username,
+            profilePic: newUser.profilePic,
             message: "User created successfully",
         });
 
     } catch (error) {
         console.error('Error in signup:', error.message);
         res.status(500).json({
-            message: "Internal server error"
+            error: "Internal server error"
         });
     }
 };
+
 
 export const login = async (req, res) => {
     try {

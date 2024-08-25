@@ -6,7 +6,7 @@ dotenv.config()
 import authRoutes from './routes/auth.routes.js'
 import messageRoutes from './routes/message.routes.js'
 import userRoutes from './routes/user.routes.js'
-
+import cors from 'cors'
 import connecttoDb from './db/db.connection.js';
 import cookieParser from 'cookie-parser';
 const PORT=process.env.PORT||5555
@@ -14,6 +14,7 @@ const PORT=process.env.PORT||5555
 app.use(express.json())
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser())
+
 app.get("/",(req,res)=>{
     res.send("Hello World");
 })
