@@ -1,21 +1,26 @@
-import mongoose,{Schema} from 'mongoose'
-import User from './user.models.js'
-const messageSchema = new Schema({
-    senderId:{
-        type:Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-    },
-    receiverId:{
-        type:Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-    },
-    message:{
-        type:String,
-        required:true
-    }
-},{timestamps:true})
+import mongoose from "mongoose";
 
-const Message=mongoose.model("Message",messageSchema)
-export default Message
+const messageSchema = new mongoose.Schema(
+	{
+		senderId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			required: true,
+		},
+		receiverId: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User",
+			required: true,
+		},
+		message: {
+			type: String,
+			required: true,
+		},
+		// createdAt, updatedAt
+	},
+	{ timestamps: true }
+);
+
+const Message = mongoose.model("Message", messageSchema);
+
+export default Message;
