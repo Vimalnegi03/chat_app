@@ -18,7 +18,9 @@ const MessageInput = () => {
 			<div className='w-full relative'>
 				<input
 					type='text'
-					className='border text-sm rounded-lg block w-full p-2.5  bg-gray-700 border-gray-600 text-white'
+					className='border text-sm rounded-lg block w-full p-2.5 bg-gray-700 border-gray-600 text-white
+					 placeholder:text-gray-400 placeholder:text-xs sm:placeholder:text-sm
+					 focus:outline-none focus:ring-2 focus:ring-blue-500'
 					placeholder='Send a message'
 					value={message}
 					onChange={(e) => setMessage(e.target.value)}
@@ -31,4 +33,3 @@ const MessageInput = () => {
 	);
 };
 export default MessageInput;
-
